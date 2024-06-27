@@ -23,7 +23,6 @@ def genders(i,gender):
 				file.writelines([f'Дата рождения: {birthdate}'])
 				file.writelines(['\n'])
 				file.writelines(['\n'])
-				# users_insert('users_mimesis',person.name(gender),person.surname(gender),person.birthdate())
 				s.post_user(SQLitedb(),name,surname,birthdate)
 
 def bd(users:int, email:int, telephone:int, car:int):
