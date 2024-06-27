@@ -1,10 +1,8 @@
 from mimesis import Person,Transport,Numeric
 from mimesis.enums import Gender
 from mimesis.locales import Locale
-from pprint import pprint
 import random
 
-# from bd import*
 from bd_oop import *
 
 person = Person(Locale.RU)
@@ -26,14 +24,10 @@ def genders(i,gender):
 				file.writelines(['\n'])
 				file.writelines(['\n'])
 				# users_insert('users_mimesis',person.name(gender),person.surname(gender),person.birthdate())
-				# s.create_table_user(SQLitedb())
 				s.post_user(SQLitedb(),name,surname,birthdate)
 
 def bd(users:int, email:int, telephone:int, car:int):
 
-	# name_tab = [i[0] for i in name_table('users_mimesis')] # удаление всех данных из таблиц
-	# for name in name_tab:
-	# 	dell('users_mimesis',name)# удаление всех данных из таблиц
 	s.create_table_user(SQLitedb())
 	if s.get_users(SQLitedb()):
 		[s.dell_table(SQLitedb(), i) for i in s.get_name_table(SQLitedb())]

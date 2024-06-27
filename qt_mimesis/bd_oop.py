@@ -173,15 +173,3 @@ class Server:
 	def dell_table(self,db,table):
 		db.connect(self.name_db)
 		db.dell(table)
-
-
-# s = Server('users_mimesis')
-# s.create_table_user(SQLitedb())
-# print(s.get_users(SQLitedb()))
-# print(s.get_name_table(SQLitedb()))
-
-# очистка всех таблиц
-# [s.dell_table(SQLitedb(), i) for i in s.get_name_table(SQLitedb())] 
-
-# s.post_user(SQLitedb(),'name','surname','birthdate')
-# s.post_email(SQLitedb(),'test@tets.ru',1)
