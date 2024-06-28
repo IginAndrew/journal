@@ -44,6 +44,24 @@ class Txt_db:
             file.writelines(['\n'])
             file.writelines(['\n'])
 
+    def phone_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS Phone'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['phone TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['user_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (user_id) REFERENCES User(id)'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['#'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
 
 class SQLitedb:
 
@@ -104,6 +122,23 @@ class Email(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+class Phone(SQLitedb):
+
+    def phone(self, name_bd):
+        table = SQLitedb()
+        table.connect(name_bd)
+        if "Phone" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
+        else:
+            phone = Txt_db()
+            phone.phone_txt(name_bd)
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                sql = file.read()
+            sql = sql[sql.find("Phone") - 27:sql.rfind("#")]
+            print(sql)
+            self.c.execute(sql)
+            self.con.commit()
+
 
 class Server:
     def __init__(self, name_bd):
@@ -117,7 +152,12 @@ class Server:
         bd.connect(self.name_bd)
         bd.email(self.name_bd)
 
+    def phone(self, bd):
+        bd.connect(self.name_bd)
+        bd.phone(self.name_bd)
+
 
 s = Server('test')
 s.users(User())
 s.email(Email())
+s.phone(Phone())
