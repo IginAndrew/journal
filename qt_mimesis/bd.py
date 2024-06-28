@@ -1,6 +1,7 @@
 import os
 import sqlite3
 
+
 class Txt_db:
     def user_args_txt(self, name_bd, *args):
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
@@ -39,10 +40,18 @@ class Txt_db:
             file.writelines(['\n'])
             file.writelines([")"])
             file.writelines(['\n'])
-            file.writelines(['#email'])
+            file.writelines(['@'])
+            file.writelines(['\n'])
             file.writelines(['\n'])
 
+
 class SQLitedb:
+
+    def dell_bd(self,name_bd):
+        if os.path.isfile(f'{name_bd}.db'):
+            return True
+        return False
+
     def connect(self, name_bd):
         try:
             self.con = sqlite3.connect(f'{name_bd}.db')
@@ -60,27 +69,37 @@ class SQLitedb:
                 ''')
         self.res = res.fetchall()
         if not self.res:
-            print("Данные не найден")
+            print("Данные не найдены")
             return False
         return [i[0] for i in self.res]
 
-    def dell_bd(self,name_bd):
-        if os.path.isfile(f'{name_bd}.db'):
-            return True
-        return False
+
 
 
 class User(SQLitedb):
 
     def users(self, name_bd):
-        dell_bd = SQLitedb()
         user_args_txt = Txt_db()
-        if dell_bd.dell_bd(name_bd):
-            print('Такая БД уже существует!!!')
+        user_args_txt.user_args_txt(name_bd, 'name', 'surname')
+        with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+            sql = file.read()
+        print(sql)
+        self.c.execute(sql)
+        self.con.commit()
+
+class Email(SQLitedb):
+
+    def email(self, name_bd):
+        table = SQLitedb()
+        table.connect(name_bd)
+        if "Email" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
         else:
-            user_args_txt.user_args_txt(name_bd, 'name', 'surname')
+            email = Txt_db()
+            email.email_txt(name_bd)
             with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
                 sql = file.read()
+            sql = sql[sql.find("Email") - 27:sql.rfind("@")]
             print(sql)
             self.c.execute(sql)
             self.con.commit()
@@ -90,11 +109,15 @@ class Server:
     def __init__(self, name_bd):
         self.name_bd = name_bd
 
-
     def users(self, bd):
         bd.connect(self.name_bd)
         bd.users(self.name_bd)
 
+    def email(self, bd):
+        bd.connect(self.name_bd)
+        bd.email(self.name_bd)
+
 
 s = Server('test')
 s.users(User())
+s.email(Email())
