@@ -85,6 +85,41 @@ class Txt_db:
             file.writelines(['\n'])
 
 
+    def language_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS Language'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['language TEXT NOT NULL'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['<'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
+    def user_id_language_id_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS User_id_language_id'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['user_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['language_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (user_id) REFERENCES User(id),'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (language_id) REFERENCES Language(id)'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['>'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
+
 class SQLitedb:
 
     def dell_bd(self,name_bd):
@@ -118,7 +153,7 @@ class User(SQLitedb):
 
     def users(self, name_bd):
         user_args_txt = Txt_db()
-        user_args_txt.user_args_txt(name_bd, 'name', 'surname')
+        user_args_txt.user_args_txt(name_bd, 'name', 'surname', 'birthdate', 'address', 'passport', 'politic')
         with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
             sql = file.read()
         print(sql)
