@@ -62,6 +62,28 @@ class Txt_db:
             file.writelines(['\n'])
             file.writelines(['\n'])
 
+    def car_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS Car'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['nomer TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['marka TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['country TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['user_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (user_id) REFERENCES User(id)'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['$'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
 
 class SQLitedb:
 
@@ -90,8 +112,6 @@ class SQLitedb:
             print("Данные не найдены")
             return False
         return [i[0] for i in self.res]
-
-
 
 
 class User(SQLitedb):
@@ -139,6 +159,23 @@ class Phone(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+class Car(SQLitedb):
+
+    def car(self, name_bd):
+        table = SQLitedb()
+        table.connect(name_bd)
+        if "Car" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
+        else:
+            car = Txt_db()
+            car.car_txt(name_bd)
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                sql = file.read()
+            sql = sql[sql.find("Car") - 27:sql.rfind("$")]
+            print(sql)
+            self.c.execute(sql)
+            self.con.commit()
+
 
 class Server:
     def __init__(self, name_bd):
@@ -156,8 +193,14 @@ class Server:
         bd.connect(self.name_bd)
         bd.phone(self.name_bd)
 
+    def car(self, bd):
+        bd.connect(self.name_bd)
+        bd.car(self.name_bd)
+
+
 
 s = Server('test')
 s.users(User())
 s.email(Email())
 s.phone(Phone())
+s.car(Car())
