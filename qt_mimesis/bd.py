@@ -142,6 +142,42 @@ class Txt_db:
             file.writelines(['\n'])
 
 
+    def work_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS Work'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['occupatione TEXT NOT NULL'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['&'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
+    def user_id_work_id_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS User_id_work_id'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['user_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['work_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (user_id) REFERENCES User(id),'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (work_id) REFERENCES Work(id)'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['|'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
+
+
 class SQLitedb:
 
     def dell_bd(self,name_bd):
@@ -283,6 +319,39 @@ class Language(SQLitedb):
             self.con.commit()
 
 
+class Work(SQLitedb):
+
+    def work(self, name_bd):
+        table = SQLitedb()
+        table.connect(name_bd)
+        if "Work" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
+        else:
+            work = Txt_db()
+            work.work_txt(name_bd)
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                sql = file.read()
+            sql = sql[sql.find("Work") - 27:sql.rfind("&")]
+            print(sql)
+            self.c.execute(sql)
+            self.con.commit()
+
+    def user_id_work_id(self, name_bd):
+        table = SQLitedb()
+        table.connect(name_bd)
+        if "User_id_work_id" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
+        else:
+            user_id_work_id = Txt_db()
+            user_id_work_id.user_id_work_id_txt(name_bd)
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                sql = file.read()
+            sql = sql[sql.find("User_id_work_id") - 27:sql.rfind("|")]
+            print(sql)
+            self.c.execute(sql)
+            self.con.commit()
+
+
 class Server:
     def __init__(self, name_bd):
         self.name_bd = name_bd
@@ -312,6 +381,11 @@ class Server:
         bd.language(self.name_bd)
         bd.user_id_language_id(self.name_bd)
 
+    def work(self, bd):
+        bd.connect(self.name_bd)
+        bd.work(self.name_bd)
+        bd.user_id_work_id(self.name_bd)
+
 
 
 s = Server('test')
@@ -321,3 +395,4 @@ s.phone(Phone())
 s.car(Car())
 s.credit(Credit())
 s.language(Language())
+s.work(Work())
