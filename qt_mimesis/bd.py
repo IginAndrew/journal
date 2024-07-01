@@ -84,6 +84,28 @@ class Txt_db:
             file.writelines(['\n'])
             file.writelines(['\n'])
 
+    def credit_txt(self, name_bd):
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(['CREATE TABLE IF NOT EXISTS Credit'])
+            file.writelines(['\n'])
+            file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
+            file.writelines(['\n'])
+            file.writelines(['credit_card_number TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['credit_card_expiration_date TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['cvv TEXT NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['user_id INTEGER NOT NULL,'])
+            file.writelines(['\n'])
+            file.writelines(['FOREIGN KEY (user_id) REFERENCES User(id)'])
+            file.writelines(['\n'])
+            file.writelines([")"])
+            file.writelines(['\n'])
+            file.writelines(['^'])
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+
 
     def language_txt(self, name_bd):
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
@@ -211,6 +233,23 @@ class Car(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+class Credit(SQLitedb):
+
+    def credit(self, name_bd):
+        table = SQLitedb()
+        table.connect(name_bd)
+        if "Credit" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
+        else:
+            credit = Txt_db()
+            credit.credit_txt(name_bd)
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                sql = file.read()
+            sql = sql[sql.find("Credit") - 27:sql.rfind("^")]
+            print(sql)
+            self.c.execute(sql)
+            self.con.commit()
+
 class Language(SQLitedb):
 
     def language(self, name_bd):
@@ -264,6 +303,10 @@ class Server:
         bd.connect(self.name_bd)
         bd.car(self.name_bd)
 
+    def credit(self, bd):
+        bd.connect(self.name_bd)
+        bd.credit(self.name_bd)
+
     def language(self, bd):
         bd.connect(self.name_bd)
         bd.language(self.name_bd)
@@ -276,4 +319,5 @@ s.users(User())
 s.email(Email())
 s.phone(Phone())
 s.car(Car())
+s.credit(Credit())
 s.language(Language())
