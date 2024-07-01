@@ -210,13 +210,18 @@ class SQLitedb:
 class User(SQLitedb):
 
     def users(self, name_bd):
-        user_args_txt = Txt_db()
-        user_args_txt.user_args_txt(name_bd, 'name', 'surname', 'birthdate', 'address', 'passport', 'politic')
-        with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
-            sql = file.read()
-        print(sql)
-        self.c.execute(sql)
-        self.con.commit()
+        table = SQLitedb()
+        table.connect(name_bd)
+        if table.get_name_table() and "User" in table.get_name_table():
+            print('Есть такая таблица в БД!!!')
+        else:
+            user_args_txt = Txt_db()
+            user_args_txt.user_args_txt(name_bd, 'name', 'surname', 'birthdate', 'address', 'passport', 'politic')
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                sql = file.read()
+            print(sql)
+            self.c.execute(sql)
+            self.con.commit()
 
 class Email(SQLitedb):
 
