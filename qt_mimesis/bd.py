@@ -392,12 +392,12 @@ class Server:
         bd.user_id_work_id(self.name_bd)
 
 
-
-s = Server('test')
-s.users(User())
-s.email(Email())
-s.phone(Phone())
-s.car(Car())
-s.credit(Credit())
-s.language(Language())
-s.work(Work())
+if __name__=="__main__":
+    s = Server('test')
+    s.users(User())
+    s.email(Email())
+    s.phone(Phone())
+    s.car(Car())
+    s.credit(Credit())
+    s.language(Language())
+    s.work(Work())
