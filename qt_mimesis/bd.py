@@ -270,6 +270,7 @@ class User(SQLitedb):
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
             file.writelines(sql)
             file.writelines(['\n'])
+            file.writelines(['\n'])
         self.c.execute(sql)
         self.con.commit()
 
@@ -289,6 +290,18 @@ class Email(SQLitedb):
             print(sql)
             self.c.execute(sql)
             self.con.commit()
+
+    def post_email(self,name_bd,email,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO Email (email,user_id) values {email,user_id}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
 
 class Phone(SQLitedb):
 
@@ -423,6 +436,10 @@ class Server:
         bd.connect(self.name_bd)
         bd.email(self.name_bd)
 
+    def post_email(self, bd,email,user_id):
+        bd.connect(self.name_bd)
+        bd.post_email(self.name_bd,email,user_id)
+
     def phone(self, bd):
         bd.connect(self.name_bd)
         bd.phone(self.name_bd)
@@ -447,7 +464,7 @@ class Server:
 
 
 if __name__=="__main__":
-    s = Server('test')
+    s = Server('www')
     # s.users(User())
     # s.email(Email())
     # s.phone(Phone())
@@ -456,4 +473,5 @@ if __name__=="__main__":
     # s.language(Language())
     # s.work(Work())
     # s.post_users(User(),list_user,add_user)
+    # s.post_email(Email(),'test@gmail.com',1)
 

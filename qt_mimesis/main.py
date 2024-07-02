@@ -27,6 +27,8 @@ class Main(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_credits)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_languages)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_work)
+        # self.ui.pushButton.clicked.connect(self.add_table_to_bd_email_data)
+
 
 # добавка имени БД + подключение к БД
     def add_database_name(self):
@@ -121,16 +123,32 @@ class Main(QMainWindow):
         except:
             return None
 
+# добавляем данные о почте
+    def add_table_to_bd_email_data(self):
+        try:
+            s = self.add_database_name()
+            for i in range(1, self.add_user_count()+1):
+                x = int(self.ui.lineEdit_3.text())
+                for _ in range(random.randint(1, x)):
+                    email_user = person.email()
+                    print(email_user)
+                    s.post_email(Email(), email_user, i)
+        except:
+            return None
+
 # добавляем таблицу почты в БД
     def add_table_to_bd_email(self):
         try:
             if self.ui.lineEdit_3.text() !=  "":
                 s = self.add_database_name()
                 s.email(Email())
+                self.add_table_to_bd_email_data()
             else:
                 return None
         except:
             return None
+
+
 
 # добавляем таблицу telephon в БД
     def add_table_to_bd_phones(self):
@@ -186,7 +204,6 @@ class Main(QMainWindow):
                 return None
         except:
             return None
-
 
 
 if __name__ == "__main__":
