@@ -3,28 +3,46 @@ import sqlite3
 
 
 class Txt_db:
+
     def user_args_txt(self, name_bd, *args):
+        # Открывает файл для добавления данных
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            # Удаляет все данные из файла
             file.seek(0)
             file.truncate()
+        # Открывает файл для добавления данных
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            # Записывает строку 'CREATE TABLE IF NOT EXISTS User' в файл
             file.writelines(['CREATE TABLE IF NOT EXISTS User'])
             file.writelines(['\n'])
+            # Записывает строку '(id INTEGER PRIMARY KEY AUTOINCREMENT,' в файл
             file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
             file.writelines(['\n'])
-        for i in range(len(args)):
-            if i + 1 != len(args):
+        # Проходит по всем элементам списка args
+        for i in range(len(args[0])):
+            # Если элемент не последний в списке
+            if i + 1 != len(args[0]):
+                # Открывает файл для добавления данных
                 with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
-                    file.writelines([f'{args[i]} TEXT NOT NULL,'])
+                    # Записывает строку с именем столбца и типом данных в файл
+                    file.writelines([f'{args[0][i]} TEXT NOT NULL,'])
                     file.writelines(['\n'])
+            # Если элемент последний в списке
             else:
+                # Открывает файл для добавления данных
                 with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
-                    file.writelines([f'{args[i]} TEXT NOT NULL'])
+                    # Записывает строку с именем столбца и типом данных в файл
+                    file.writelines([f'{args[0][i]} TEXT NOT NULL'])
                     file.writelines(['\n'])
+        # Открывает файл для добавления данных
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            # Записывает строку ')' в файл
             file.writelines([")"])
             file.writelines(['\n'])
+            # Записывает строку '\n' в файл
             file.writelines(['\n'])
+
+
 
     def email_txt(self, name_bd):
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
@@ -181,47 +199,74 @@ class Txt_db:
 class SQLitedb:
 
     def dell_bd(self,name_bd):
+        # Проверяет, существует ли файл базы данных
         if os.path.isfile(f'{name_bd}.db'):
+            # Если файл существует, возвращает True
             return True
+        # Если файла не существует, возвращает False
         return False
 
     def connect(self, name_bd):
+        # Пытается подключиться к базе данных
         try:
+            # Подключается к базе данных
             self.con = sqlite3.connect(f'{name_bd}.db')
+            # Выводит сообщение об успешном подключении
             print("Успешное подключение!")
+            # Создает курсор для выполнения SQL-запросов
             with self.con:
                 self.c = self.con.cursor()
+            # Возвращает курсор
             return self.c
+        # Если возникает ошибка, выводит сообщение об ошибке подключения
         except Exception:
             print("Ошибка подключения!")
 
     def get_name_table(self):  # выводит все таблицы из бд
+        # Выполняет SQL-запрос для получения имен всех таблиц в базе данных
         res = self.c.execute('''
                SELECT name FROM sqlite_master 
                 WHERE type='table'
                 ''')
+        # Получает все результаты запроса
         self.res = res.fetchall()
+        # Если результаты не найдены, выводит сообщение и возвращает False
         if not self.res:
             print("Данные не найдены")
             return False
+        # Возвращает список имен всех таблиц
         return [i[0] for i in self.res]
 
 
 class User(SQLitedb):
 
     def users(self, name_bd):
+        # Создает объект класса SQLitedb
         table = SQLitedb()
+        # Подключается к базе данных
         table.connect(name_bd)
-        if table.get_name_table() and "User" in table.get_name_table():
+        # Получает список имен всех таблиц в базе данных
+        name_table = table.get_name_table()
+        # Если список имен таблиц не пуст и в нем есть строка 'User', выводит сообщение
+        if name_table and "User" in name_table:
             print('Есть такая таблица в БД!!!')
+        # Если список имен таблиц пуст или в нем нет строки 'User', создает таблицу 'User' в базе данных
         else:
-            user_args_txt = Txt_db()
-            user_args_txt.user_args_txt(name_bd, 'name', 'surname', 'birthdate', 'address', 'passport', 'politic')
+            # # Создает объект класса Txt_db
+            # user_args_txt = Txt_db()
+            # # Записывает данные о столбцах таблицы 'User' в файл
+            # user_args_txt.user_args_txt(name_bd, list_name_user)
+            # # Открывает файл для чтения данных
             with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                # Читает данные из файла
                 sql = file.read()
+            # Выводит данные из файла
             print(sql)
+            # Выполняет SQL-запрос для создания таблицы 'User' в базе данных
             self.c.execute(sql)
+            # Фиксирует изменения в базе данных
             self.con.commit()
+
 
 class Email(SQLitedb):
 
@@ -401,3 +446,4 @@ if __name__=="__main__":
     s.credit(Credit())
     s.language(Language())
     s.work(Work())
+
