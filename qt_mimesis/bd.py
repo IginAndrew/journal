@@ -252,11 +252,6 @@ class User(SQLitedb):
             print('Есть такая таблица в БД!!!')
         # Если список имен таблиц пуст или в нем нет строки 'User', создает таблицу 'User' в базе данных
         else:
-            # # Создает объект класса Txt_db
-            # user_args_txt = Txt_db()
-            # # Записывает данные о столбцах таблицы 'User' в файл
-            # user_args_txt.user_args_txt(name_bd, list_name_user)
-            # # Открывает файл для чтения данных
             with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
                 # Читает данные из файла
                 sql = file.read()
