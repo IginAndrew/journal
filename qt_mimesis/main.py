@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
-from qt_mimesis.bd import Server, User, Txt_db, Email, Phone
+from qt_mimesis.bd import Server, User, Txt_db, Email, Phone, Car
 from qt_mimesis.ui.ui_main import Ui_MainWindow
 
 
@@ -102,6 +102,17 @@ class Main(QMainWindow):
             if self.ui.lineEdit_4.text() !=  "":
                 s = self.add_database_name()
                 s.phone(Phone())
+            else:
+                return None
+        except:
+            return None
+
+# добавляем таблицу car в БД
+    def add_table_to_bd_cars(self):
+        try:
+            if self.ui.lineEdit_5.text() !=  "":
+                s = self.add_database_name()
+                s.car(Car())
             else:
                 return None
         except:
