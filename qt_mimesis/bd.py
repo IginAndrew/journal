@@ -378,6 +378,19 @@ class Credit(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_credit(self,name_bd,credit_card_number,credit_card_expiration_date,cvv,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO Credit(credit_card_number,credit_card_expiration_date,cvv,user_id)"
+               f"values {credit_card_number,credit_card_expiration_date,cvv,user_id}")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
 class Language(SQLitedb):
 
     def language(self, name_bd):
@@ -484,6 +497,10 @@ class Server:
         bd.connect(self.name_bd)
         bd.credit(self.name_bd)
 
+    def post_credit(self, bd,credit_card_number,credit_card_expiration_date,cvv,user_id):
+        bd.connect(self.name_bd)
+        bd.post_credit(self.name_bd,credit_card_number,credit_card_expiration_date,cvv,user_id)
+
     def language(self, bd):
         bd.connect(self.name_bd)
         bd.language(self.name_bd)
@@ -508,4 +525,5 @@ if __name__=="__main__":
     # s.post_email(Email(),'test@gmail.com',1)
     # s.post_phone(Phone(), '123456', 1)
     # s.post_car(Car(),'123', '123', '123', 1)
+    # s.post_credit(Credit(),'123', '123', '123', 1)
 

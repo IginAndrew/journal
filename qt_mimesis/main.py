@@ -4,16 +4,18 @@ from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from qt_mimesis.bd import Server, User, Txt_db, Email, Phone, Car, Credit, Language, Work
 from qt_mimesis.ui.ui_main import Ui_MainWindow
 
-from mimesis import Person,Transport,Numeric
+from mimesis import Person, Transport, Numeric, Payment
 from mimesis.enums import Gender
 from mimesis.locales import Locale
 from mimesis import Address
+
 import random
 
 person = Person(Locale.RU)
 transport = Transport()
 numeric = Numeric()
 address = Address(locale="ru")
+payment = Payment()
 
 class Main(QMainWindow):
     def __init__(self):
@@ -200,11 +202,25 @@ class Main(QMainWindow):
             return None
 
 # добавляем таблицу credits в БД
+
+    def add_table_to_bd_credits_data(self):
+        try:
+            s = self.add_database_name()
+            for i in range(1, self.add_user_count()+1):
+                x = int(self.ui.lineEdit_6.text())
+                for _ in range(random.randint(1, x)):
+                    credit_card_number = payment.credit_card_number()
+                    credit_card_expiration_date = payment.credit_card_expiration_date()
+                    cvv = payment.cvv()
+                    s.post_credit(Credit(), credit_card_number, credit_card_expiration_date, cvv, i)
+        except:
+            return None
     def add_table_to_bd_credits(self):
         try:
             if self.ui.lineEdit_6.text() !=  "":
                 s = self.add_database_name()
                 s.credit(Credit())
+                self.add_table_to_bd_credits_data()
             else:
                 return None
         except:
