@@ -232,7 +232,7 @@ class SQLitedb:
         self.res = res.fetchall()
         # Если результаты не найдены, выводит сообщение и возвращает False
         if not self.res:
-            print("Данные не найдены")
+            print("Данные не найдены!!!!!!")
             return False
         # Возвращает список имен всех таблиц
         return [i[0] for i in self.res]
@@ -262,6 +262,16 @@ class User(SQLitedb):
             # Фиксирует изменения в базе данных
             self.con.commit()
 
+    def post_user(self,name_bd,tuple_list_user,add_user):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO User {tuple(tuple_list_user)} values {add_user}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
 
 class Email(SQLitedb):
 
@@ -405,6 +415,10 @@ class Server:
         bd.connect(self.name_bd)
         bd.users(self.name_bd)
 
+    def post_users(self, bd,tuple_list_user,add_user):
+        bd.connect(self.name_bd)
+        bd.post_user(self.name_bd,tuple_list_user,add_user)
+
     def email(self, bd):
         bd.connect(self.name_bd)
         bd.email(self.name_bd)
@@ -434,11 +448,12 @@ class Server:
 
 if __name__=="__main__":
     s = Server('test')
-    s.users(User())
-    s.email(Email())
-    s.phone(Phone())
-    s.car(Car())
-    s.credit(Credit())
-    s.language(Language())
-    s.work(Work())
+    # s.users(User())
+    # s.email(Email())
+    # s.phone(Phone())
+    # s.car(Car())
+    # s.credit(Credit())
+    # s.language(Language())
+    # s.work(Work())
+    # s.post_users(User(),list_user,add_user)
 
