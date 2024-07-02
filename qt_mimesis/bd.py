@@ -408,6 +408,32 @@ class Language(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_language(self,name_bd,language):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO Language(language) values ('{language}')")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_language(self):
+        res = self.c.execute('''SELECT language FROM Language''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
+    def get_language_id(self):
+        res = self.c.execute('''SELECT id FROM Language''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
+
+
     def user_id_language_id(self, name_bd):
         table = SQLitedb()
         table.connect(name_bd)
@@ -422,6 +448,18 @@ class Language(SQLitedb):
             print(sql)
             self.c.execute(sql)
             self.con.commit()
+
+    def post_user_id_language_id(self,name_bd,user_id,language_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO User_id_language_id(user_id,language_id) values {user_id,language_id}")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
 
 
 class Work(SQLitedb):
@@ -506,6 +544,19 @@ class Server:
         bd.language(self.name_bd)
         bd.user_id_language_id(self.name_bd)
 
+    def get_language(self,bd):
+        bd.connect(self.name_bd)
+        bd.get_language(self.name_bd)
+
+
+    def post_language(self, bd,language):
+        bd.connect(self.name_bd)
+        bd.post_language(self.name_bd,language)
+
+    def post_user_id_language_id(self, bd,user_id,language_id):
+        bd.connect(self.name_bd)
+        bd.post_user_id_language_id(self.name_bd,user_id,language_id)
+
     def work(self, bd):
         bd.connect(self.name_bd)
         bd.work(self.name_bd)
@@ -526,4 +577,10 @@ if __name__=="__main__":
     # s.post_phone(Phone(), '123456', 1)
     # s.post_car(Car(),'123', '123', '123', 1)
     # s.post_credit(Credit(),'123', '123', '123', 1)
+    # s.post_language(Language(),'ru')
+    # s.post_user_id_language_id(Language(),1,1)
+    l = Language()
+    l.connect('www')
+    print(l.get_language_id())
+
 

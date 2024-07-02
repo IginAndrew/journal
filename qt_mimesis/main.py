@@ -227,17 +227,48 @@ class Main(QMainWindow):
             return None
 
 # добавляем таблицу language в БД
+
+    def add_table_to_bd_languages_data(self):
+        try:
+            s = self.add_database_name()
+            l = Language()
+            l.connect(self.ui.lineEdit.text())
+            for i in range(1, self.add_user_count()+1):
+                x = int(self.ui.lineEdit_7.text())
+                for _ in range(random.randint(1, x)):
+                    language_user = person.language()
+                    if language_user not in l.get_language():
+                        s.post_language(Language(), language_user)
+                    else:
+                        continue
+        except:
+            return None
+
+    def add_user_id_language_id_data(self):
+        try:
+            s = self.add_database_name()
+            l = Language()
+            l.connect(self.ui.lineEdit.text())
+            for i in range(1, self.add_user_count()+1):
+                x = int(self.ui.lineEdit_7.text())
+                for _ in range(random.randint(1, x)):
+                    s.post_user_id_language_id(Language(), i, random.choice(l.get_language_id()))
+        except:
+            return None
+
     def add_table_to_bd_languages(self):
         try:
             if self.ui.lineEdit_7.text() !=  "":
                 s = self.add_database_name()
                 s.language(Language())
+                self.add_table_to_bd_languages_data()
+                self.add_user_id_language_id_data()
             else:
                 return None
         except:
             return None
 
-# добавляем таблицу language в БД
+# добавляем таблицу work в БД
     def add_table_to_bd_work(self):
         try:
             if self.ui.lineEdit_8.text() !=  "":
