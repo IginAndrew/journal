@@ -320,9 +320,21 @@ class Phone(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_phone(self,name_bd,phone,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO Phone (phone,user_id) values {phone,user_id}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
 class Car(SQLitedb):
 
-    def car(self, name_bd):
+    def car(self,name_bd):
         table = SQLitedb()
         table.connect(name_bd)
         if "Car" in table.get_name_table():
@@ -336,6 +348,18 @@ class Car(SQLitedb):
             print(sql)
             self.c.execute(sql)
             self.con.commit()
+
+    def post_car(self,name_bd,nomer,marka,country,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO Car (nomer,marka,country,user_id) values {nomer,marka,country,user_id}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
 
 class Credit(SQLitedb):
 
@@ -444,9 +468,17 @@ class Server:
         bd.connect(self.name_bd)
         bd.phone(self.name_bd)
 
+    def post_phone(self, bd,phone,user_id):
+        bd.connect(self.name_bd)
+        bd.post_phone(self.name_bd,phone,user_id)
+
     def car(self, bd):
         bd.connect(self.name_bd)
         bd.car(self.name_bd)
+
+    def post_car(self, bd,nomer,marka,country,user_id):
+        bd.connect(self.name_bd)
+        bd.post_car(self.name_bd,nomer,marka,country,user_id)
 
     def credit(self, bd):
         bd.connect(self.name_bd)
@@ -474,4 +506,6 @@ if __name__=="__main__":
     # s.work(Work())
     # s.post_users(User(),list_user,add_user)
     # s.post_email(Email(),'test@gmail.com',1)
+    # s.post_phone(Phone(), '123456', 1)
+    # s.post_car(Car(),'123', '123', '123', 1)
 

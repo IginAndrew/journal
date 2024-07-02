@@ -151,22 +151,49 @@ class Main(QMainWindow):
 
 
 # добавляем таблицу telephon в БД
+
+    def add_table_to_bd_phone_data(self):
+        try:
+            s = self.add_database_name()
+            for i in range(1, self.add_user_count()+1):
+                x = int(self.ui.lineEdit_4.text())
+                for _ in range(random.randint(1, x)):
+                    phone_user = person.telephone()
+                    print(phone_user)
+                    s.post_phone(Phone(), phone_user, i)
+        except:
+            return None
     def add_table_to_bd_phones(self):
         try:
             if self.ui.lineEdit_4.text() !=  "":
                 s = self.add_database_name()
                 s.phone(Phone())
+                self.add_table_to_bd_phone_data()
             else:
                 return None
         except:
             return None
 
 # добавляем таблицу car в БД
+
+    def add_table_to_bd_car_data(self):
+        try:
+            s = self.add_database_name()
+            for i in range(1, self.add_user_count()+1):
+                x = int(self.ui.lineEdit_5.text())
+                for _ in range(random.randint(1, x)):
+                    nomer = abs(numeric.integer_number())
+                    marka = transport.manufacturer()
+                    znak = transport.vehicle_registration_code()
+                    s.post_car(Car(), str(nomer), marka, str(znak), i)
+        except:
+            return None
     def add_table_to_bd_cars(self):
         try:
             if self.ui.lineEdit_5.text() !=  "":
                 s = self.add_database_name()
                 s.car(Car())
+                self.add_table_to_bd_car_data()
             else:
                 return None
         except:
