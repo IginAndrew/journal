@@ -461,6 +461,12 @@ class Language(SQLitedb):
         self.c.execute(sql)
         self.con.commit()
 
+    def get_user_id_language_id_language_id(self):
+        res = self.c.execute('''SELECT language_id FROM User_id_language_id''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
 
 class Work(SQLitedb):
 
@@ -479,6 +485,30 @@ class Work(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_work(self,name_bd,occupatione):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO Work(occupatione) values ('{occupatione}')")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_work(self):
+        res = self.c.execute('''SELECT occupatione FROM Work''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
+    def get_work_id(self):
+        res = self.c.execute('''SELECT id FROM Work''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
     def user_id_work_id(self, name_bd):
         table = SQLitedb()
         table.connect(name_bd)
@@ -493,6 +523,24 @@ class Work(SQLitedb):
             print(sql)
             self.c.execute(sql)
             self.con.commit()
+
+    def post_user_id_work_id(self,name_bd,user_id,work_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO User_id_work_id(user_id,work_id) values {user_id,work_id}")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_user_id_work_id_work_id(self):
+        res = self.c.execute('''SELECT work_id FROM User_id_work_id''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
 
 
 class Server:
@@ -562,6 +610,14 @@ class Server:
         bd.work(self.name_bd)
         bd.user_id_work_id(self.name_bd)
 
+    def post_work(self, bd,occupatione):
+        bd.connect(self.name_bd)
+        bd.post_work(self.name_bd,occupatione)
+
+    def post_user_id_work_id(self, bd,user_id,work_id):
+        bd.connect(self.name_bd)
+        bd.post_user_id_work_id(self.name_bd,user_id,work_id)
+
 
 if __name__=="__main__":
     s = Server('www')
@@ -579,8 +635,8 @@ if __name__=="__main__":
     # s.post_credit(Credit(),'123', '123', '123', 1)
     # s.post_language(Language(),'ru')
     # s.post_user_id_language_id(Language(),1,1)
-    l = Language()
+    l = Work()
     l.connect('www')
-    print(l.get_language_id())
+    print(l.get_user_id_work_id_work_id())
 
 
