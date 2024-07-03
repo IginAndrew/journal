@@ -1,4 +1,6 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from qt_mimesis.bd import Server, User, Txt_db, Email, Phone, Car, Credit, Language, Work
@@ -29,8 +31,19 @@ class Main(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_credits)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_languages)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_work)
-        # self.ui.pushButton.clicked.connect(self.add_table_to_bd_email_data)
-
+        intRange = "(^[1-9]{1}$|^[1-4]{1}[0-9]{1}$|^10$)"
+        intRegex = QRegExp("^" + intRange)
+        intValidator = QRegExpValidator(intRegex, self)
+        self.ui.lineEdit_2.setValidator(intValidator)
+        range_int = "([1-9])"
+        regex_int = QRegExp("^" + range_int)
+        validator_int = QRegExpValidator(regex_int, self)
+        self.ui.lineEdit_3.setValidator(validator_int)
+        self.ui.lineEdit_4.setValidator(validator_int)
+        self.ui.lineEdit_5.setValidator(validator_int)
+        self.ui.lineEdit_6.setValidator(validator_int)
+        self.ui.lineEdit_7.setValidator(validator_int)
+        self.ui.lineEdit_8.setValidator(validator_int)
 
 # добавка имени БД + подключение к БД
     def add_database_name(self):
