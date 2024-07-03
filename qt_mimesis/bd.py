@@ -3,28 +3,46 @@ import sqlite3
 
 
 class Txt_db:
+
     def user_args_txt(self, name_bd, *args):
+        # Открывает файл для добавления данных
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            # Удаляет все данные из файла
             file.seek(0)
             file.truncate()
+        # Открывает файл для добавления данных
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            # Записывает строку 'CREATE TABLE IF NOT EXISTS User' в файл
             file.writelines(['CREATE TABLE IF NOT EXISTS User'])
             file.writelines(['\n'])
+            # Записывает строку '(id INTEGER PRIMARY KEY AUTOINCREMENT,' в файл
             file.writelines(['(id INTEGER PRIMARY KEY AUTOINCREMENT,'])
             file.writelines(['\n'])
-        for i in range(len(args)):
-            if i + 1 != len(args):
+        # Проходит по всем элементам списка args
+        for i in range(len(args[0])):
+            # Если элемент не последний в списке
+            if i + 1 != len(args[0]):
+                # Открывает файл для добавления данных
                 with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
-                    file.writelines([f'{args[i]} TEXT NOT NULL,'])
+                    # Записывает строку с именем столбца и типом данных в файл
+                    file.writelines([f'{args[0][i]} TEXT NOT NULL,'])
                     file.writelines(['\n'])
+            # Если элемент последний в списке
             else:
+                # Открывает файл для добавления данных
                 with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
-                    file.writelines([f'{args[i]} TEXT NOT NULL'])
+                    # Записывает строку с именем столбца и типом данных в файл
+                    file.writelines([f'{args[0][i]} TEXT NOT NULL'])
                     file.writelines(['\n'])
+        # Открывает файл для добавления данных
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            # Записывает строку ')' в файл
             file.writelines([")"])
             file.writelines(['\n'])
+            # Записывает строку '\n' в файл
             file.writelines(['\n'])
+
+
 
     def email_txt(self, name_bd):
         with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
@@ -181,47 +199,80 @@ class Txt_db:
 class SQLitedb:
 
     def dell_bd(self,name_bd):
+        # Проверяет, существует ли файл базы данных
         if os.path.isfile(f'{name_bd}.db'):
+            # Если файл существует, возвращает True
             return True
+        # Если файла не существует, возвращает False
         return False
 
     def connect(self, name_bd):
+        # Пытается подключиться к базе данных
         try:
+            # Подключается к базе данных
             self.con = sqlite3.connect(f'{name_bd}.db')
+            # Выводит сообщение об успешном подключении
             print("Успешное подключение!")
+            # Создает курсор для выполнения SQL-запросов
             with self.con:
                 self.c = self.con.cursor()
+            # Возвращает курсор
             return self.c
+        # Если возникает ошибка, выводит сообщение об ошибке подключения
         except Exception:
             print("Ошибка подключения!")
 
     def get_name_table(self):  # выводит все таблицы из бд
+        # Выполняет SQL-запрос для получения имен всех таблиц в базе данных
         res = self.c.execute('''
                SELECT name FROM sqlite_master 
                 WHERE type='table'
                 ''')
+        # Получает все результаты запроса
         self.res = res.fetchall()
+        # Если результаты не найдены, выводит сообщение и возвращает False
         if not self.res:
-            print("Данные не найдены")
+            print("Данные не найдены!!!!!!")
             return False
+        # Возвращает список имен всех таблиц
         return [i[0] for i in self.res]
 
 
 class User(SQLitedb):
 
     def users(self, name_bd):
+        # Создает объект класса SQLitedb
+        table = SQLitedb()
+        # Подключается к базе данных
+        table.connect(name_bd)
+        # Получает список имен всех таблиц в базе данных
+        name_table = table.get_name_table()
+        # Если список имен таблиц не пуст и в нем есть строка 'User', выводит сообщение
+        if name_table and "User" in name_table:
+            print('Есть такая таблица в БД!!!')
+        # Если список имен таблиц пуст или в нем нет строки 'User', создает таблицу 'User' в базе данных
+        else:
+            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
+                # Читает данные из файла
+                sql = file.read()
+            # Выводит данные из файла
+            print(sql)
+            # Выполняет SQL-запрос для создания таблицы 'User' в базе данных
+            self.c.execute(sql)
+            # Фиксирует изменения в базе данных
+            self.con.commit()
+
+    def post_user(self,name_bd,tuple_list_user,add_user):
         table = SQLitedb()
         table.connect(name_bd)
-        if table.get_name_table() and "User" in table.get_name_table():
-            print('Есть такая таблица в БД!!!')
-        else:
-            user_args_txt = Txt_db()
-            user_args_txt.user_args_txt(name_bd, 'name', 'surname', 'birthdate', 'address', 'passport', 'politic')
-            with open(f'user_{name_bd}.txt', 'r', encoding='utf-8') as file:
-                sql = file.read()
-            print(sql)
-            self.c.execute(sql)
-            self.con.commit()
+        sql = f"INSERT INTO User {tuple(tuple_list_user)} values {add_user}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
 
 class Email(SQLitedb):
 
@@ -240,6 +291,18 @@ class Email(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_email(self,name_bd,email,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO Email (email,user_id) values {email,user_id}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
 class Phone(SQLitedb):
 
     def phone(self, name_bd):
@@ -257,9 +320,21 @@ class Phone(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_phone(self,name_bd,phone,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO Phone (phone,user_id) values {phone,user_id}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
 class Car(SQLitedb):
 
-    def car(self, name_bd):
+    def car(self,name_bd):
         table = SQLitedb()
         table.connect(name_bd)
         if "Car" in table.get_name_table():
@@ -273,6 +348,18 @@ class Car(SQLitedb):
             print(sql)
             self.c.execute(sql)
             self.con.commit()
+
+    def post_car(self,name_bd,nomer,marka,country,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = f"INSERT INTO Car (nomer,marka,country,user_id) values {nomer,marka,country,user_id}"
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
 
 class Credit(SQLitedb):
 
@@ -291,6 +378,19 @@ class Credit(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_credit(self,name_bd,credit_card_number,credit_card_expiration_date,cvv,user_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO Credit(credit_card_number,credit_card_expiration_date,cvv,user_id)"
+               f"values {credit_card_number,credit_card_expiration_date,cvv,user_id}")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
 class Language(SQLitedb):
 
     def language(self, name_bd):
@@ -308,6 +408,32 @@ class Language(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_language(self,name_bd,language):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO Language(language) values ('{language}')")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_language(self):
+        res = self.c.execute('''SELECT language FROM Language''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
+    def get_language_id(self):
+        res = self.c.execute('''SELECT id FROM Language''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
+
+
     def user_id_language_id(self, name_bd):
         table = SQLitedb()
         table.connect(name_bd)
@@ -322,6 +448,24 @@ class Language(SQLitedb):
             print(sql)
             self.c.execute(sql)
             self.con.commit()
+
+    def post_user_id_language_id(self,name_bd,user_id,language_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO User_id_language_id(user_id,language_id) values {user_id,language_id}")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_user_id_language_id_language_id(self):
+        res = self.c.execute('''SELECT language_id FROM User_id_language_id''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
 
 
 class Work(SQLitedb):
@@ -341,6 +485,30 @@ class Work(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_work(self,name_bd,occupatione):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO Work(occupatione) values ('{occupatione}')")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_work(self):
+        res = self.c.execute('''SELECT occupatione FROM Work''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
+    def get_work_id(self):
+        res = self.c.execute('''SELECT id FROM Work''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
     def user_id_work_id(self, name_bd):
         table = SQLitedb()
         table.connect(name_bd)
@@ -356,6 +524,24 @@ class Work(SQLitedb):
             self.c.execute(sql)
             self.con.commit()
 
+    def post_user_id_work_id(self,name_bd,user_id,work_id):
+        table = SQLitedb()
+        table.connect(name_bd)
+        sql = (f"INSERT INTO User_id_work_id(user_id,work_id) values {user_id,work_id}")
+        print(sql)
+        with open(f'user_{name_bd}.txt', 'a', encoding='utf-8') as file:
+            file.writelines(sql)
+            file.writelines(['\n'])
+            file.writelines(['\n'])
+        self.c.execute(sql)
+        self.con.commit()
+
+    def get_user_id_work_id_work_id(self):
+        res = self.c.execute('''SELECT work_id FROM User_id_work_id''')
+        res = res.fetchall()
+        r = ([i[0] for i in res])
+        return r
+
 
 class Server:
     def __init__(self, name_bd):
@@ -365,39 +551,92 @@ class Server:
         bd.connect(self.name_bd)
         bd.users(self.name_bd)
 
+    def post_users(self, bd,tuple_list_user,add_user):
+        bd.connect(self.name_bd)
+        bd.post_user(self.name_bd,tuple_list_user,add_user)
+
     def email(self, bd):
         bd.connect(self.name_bd)
         bd.email(self.name_bd)
+
+    def post_email(self, bd,email,user_id):
+        bd.connect(self.name_bd)
+        bd.post_email(self.name_bd,email,user_id)
 
     def phone(self, bd):
         bd.connect(self.name_bd)
         bd.phone(self.name_bd)
 
+    def post_phone(self, bd,phone,user_id):
+        bd.connect(self.name_bd)
+        bd.post_phone(self.name_bd,phone,user_id)
+
     def car(self, bd):
         bd.connect(self.name_bd)
         bd.car(self.name_bd)
 
+    def post_car(self, bd,nomer,marka,country,user_id):
+        bd.connect(self.name_bd)
+        bd.post_car(self.name_bd,nomer,marka,country,user_id)
+
     def credit(self, bd):
         bd.connect(self.name_bd)
         bd.credit(self.name_bd)
+
+    def post_credit(self, bd,credit_card_number,credit_card_expiration_date,cvv,user_id):
+        bd.connect(self.name_bd)
+        bd.post_credit(self.name_bd,credit_card_number,credit_card_expiration_date,cvv,user_id)
 
     def language(self, bd):
         bd.connect(self.name_bd)
         bd.language(self.name_bd)
         bd.user_id_language_id(self.name_bd)
 
+    def get_language(self,bd):
+        bd.connect(self.name_bd)
+        bd.get_language(self.name_bd)
+
+
+    def post_language(self, bd,language):
+        bd.connect(self.name_bd)
+        bd.post_language(self.name_bd,language)
+
+    def post_user_id_language_id(self, bd,user_id,language_id):
+        bd.connect(self.name_bd)
+        bd.post_user_id_language_id(self.name_bd,user_id,language_id)
+
     def work(self, bd):
         bd.connect(self.name_bd)
         bd.work(self.name_bd)
         bd.user_id_work_id(self.name_bd)
 
+    def post_work(self, bd,occupatione):
+        bd.connect(self.name_bd)
+        bd.post_work(self.name_bd,occupatione)
+
+    def post_user_id_work_id(self, bd,user_id,work_id):
+        bd.connect(self.name_bd)
+        bd.post_user_id_work_id(self.name_bd,user_id,work_id)
+
 
 if __name__=="__main__":
-    s = Server('test')
-    s.users(User())
-    s.email(Email())
-    s.phone(Phone())
-    s.car(Car())
-    s.credit(Credit())
-    s.language(Language())
-    s.work(Work())
+    s = Server('www')
+    # s.users(User())
+    # s.email(Email())
+    # s.phone(Phone())
+    # s.car(Car())
+    # s.credit(Credit())
+    # s.language(Language())
+    # s.work(Work())
+    # s.post_users(User(),list_user,add_user)
+    # s.post_email(Email(),'test@gmail.com',1)
+    # s.post_phone(Phone(), '123456', 1)
+    # s.post_car(Car(),'123', '123', '123', 1)
+    # s.post_credit(Credit(),'123', '123', '123', 1)
+    # s.post_language(Language(),'ru')
+    # s.post_user_id_language_id(Language(),1,1)
+    l = Work()
+    l.connect('www')
+    print(l.get_user_id_work_id_work_id())
+
+
