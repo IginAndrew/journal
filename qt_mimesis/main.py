@@ -31,6 +31,7 @@ class Main(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_credits)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_languages)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_work)
+        self.ui.pushButton.clicked.connect(self.clear_line_edit)
         intRange = "(^[1-9]{1}$|^[1-4]{1}[0-9]{1}$|^10$)"
         intRegex = QRegExp("^" + intRange)
         intValidator = QRegExpValidator(intRegex, self)
@@ -67,6 +68,7 @@ class Main(QMainWindow):
         try:
             if self.ui.lineEdit_2.text() != "":
                 count = self.ui.lineEdit_2.text()
+
                 return int(count)
             else:
                 QMessageBox.warning(
@@ -158,6 +160,7 @@ class Main(QMainWindow):
                 s = self.add_database_name()
                 s.email(Email())
                 self.add_table_to_bd_email_data()
+
             else:
                 return None
         except:
@@ -184,6 +187,7 @@ class Main(QMainWindow):
                 s = self.add_database_name()
                 s.phone(Phone())
                 self.add_table_to_bd_phone_data()
+
             else:
                 return None
         except:
@@ -209,6 +213,7 @@ class Main(QMainWindow):
                 s = self.add_database_name()
                 s.car(Car())
                 self.add_table_to_bd_car_data()
+
             else:
                 return None
         except:
@@ -234,6 +239,7 @@ class Main(QMainWindow):
                 s = self.add_database_name()
                 s.credit(Credit())
                 self.add_table_to_bd_credits_data()
+
             else:
                 return None
         except:
@@ -280,6 +286,7 @@ class Main(QMainWindow):
                 s.language(Language())
                 self.add_table_to_bd_languages_data()
                 self.add_user_id_language_id_data()
+
             else:
                 return None
         except:
@@ -325,10 +332,27 @@ class Main(QMainWindow):
                 s.work(Work())
                 self.add_table_to_bd_work_data()
                 self.add_user_id_work_id_data()
+
             else:
                 return None
         except:
             return None
+
+    def clear_line_edit(self):# очищаем все поля
+        self.ui.checkBox.setChecked(False)
+        self.ui.checkBox_2.setChecked(False)
+        self.ui.checkBox_3.setChecked(False)
+        self.ui.checkBox_4.setChecked(False)
+        self.ui.checkBox_5.setChecked(False)
+        self.ui.checkBox_6.setChecked(False)
+        self.ui.lineEdit.clear()
+        self.ui.lineEdit_2.clear()
+        self.ui.lineEdit_3.clear()
+        self.ui.lineEdit_4.clear()
+        self.ui.lineEdit_5.clear()
+        self.ui.lineEdit_6.clear()
+        self.ui.lineEdit_7.clear()
+        self.ui.lineEdit_8.clear()
 
 
 if __name__ == "__main__":
