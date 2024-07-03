@@ -621,22 +621,5 @@ class Server:
 
 if __name__=="__main__":
     s = Server('www')
-    # s.users(User())
-    # s.email(Email())
-    # s.phone(Phone())
-    # s.car(Car())
-    # s.credit(Credit())
-    # s.language(Language())
-    # s.work(Work())
-    # s.post_users(User(),list_user,add_user)
-    # s.post_email(Email(),'test@gmail.com',1)
-    # s.post_phone(Phone(), '123456', 1)
-    # s.post_car(Car(),'123', '123', '123', 1)
-    # s.post_credit(Credit(),'123', '123', '123', 1)
-    # s.post_language(Language(),'ru')
-    # s.post_user_id_language_id(Language(),1,1)
-    l = Work()
-    l.connect('www')
-    print(l.get_user_id_work_id_work_id())
 
 

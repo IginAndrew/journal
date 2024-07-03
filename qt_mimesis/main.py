@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QMainWindow, QMessageBox
+from PyQt5.QtGui import QRegExpValidator, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QFileDialog
 
 from qt_mimesis.bd import Server, User, Txt_db, Email, Phone, Car, Credit, Language, Work
 from qt_mimesis.ui.ui_main import Ui_MainWindow
@@ -12,6 +12,8 @@ from mimesis.locales import Locale
 from mimesis import Address
 
 import random
+
+from PIL import Image
 
 person = Person(Locale.RU)
 transport = Transport()
@@ -32,6 +34,7 @@ class Main(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_languages)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_work)
         self.ui.pushButton.clicked.connect(self.clear_line_edit)
+        self.ui.pushButton_2.clicked.connect(self.pil_open)
         intRange = "(^[1-9]{1}$|^[1-4]{1}[0-9]{1}$|^10$)"
         intRegex = QRegExp("^" + intRange)
         intValidator = QRegExpValidator(intRegex, self)
@@ -45,6 +48,8 @@ class Main(QMainWindow):
         self.ui.lineEdit_6.setValidator(validator_int)
         self.ui.lineEdit_7.setValidator(validator_int)
         self.ui.lineEdit_8.setValidator(validator_int)
+
+        self.bitmap_label = None
 
 # добавка имени БД + подключение к БД
     def add_database_name(self):
@@ -353,6 +358,12 @@ class Main(QMainWindow):
         self.ui.lineEdit_6.clear()
         self.ui.lineEdit_7.clear()
         self.ui.lineEdit_8.clear()
+
+    def pil_open(self):
+        filename = ('7.png')
+        with Image.open(filename) as img:
+            img.load()
+            img.show()
 
 
 if __name__ == "__main__":
