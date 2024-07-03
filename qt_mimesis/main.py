@@ -1,10 +1,13 @@
+import os
+import subprocess
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QFileDialog
 
-from qt_mimesis.bd import Server, User, Txt_db, Email, Phone, Car, Credit, Language, Work
-from qt_mimesis.ui.ui_main import Ui_MainWindow
+from bd import Server, User, Txt_db, Email, Phone, Car, Credit, Language, Work
+from ui.ui_main import Ui_MainWindow
 
 from mimesis import Person, Transport, Numeric, Payment
 from mimesis.enums import Gender
@@ -14,6 +17,8 @@ from mimesis import Address
 import random
 
 from PIL import Image
+
+import platform
 
 person = Person(Locale.RU)
 transport = Transport()
@@ -34,6 +39,7 @@ class Main(QMainWindow):
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_languages)
         self.ui.pushButton.clicked.connect(self.add_table_to_bd_work)
         self.ui.pushButton.clicked.connect(self.clear_line_edit)
+        self.ui.pushButton.clicked.connect(self.show_info_messagebox)
         self.ui.pushButton_2.clicked.connect(self.pil_open)
         intRange = "(^[1-9]{1}$|^[1-4]{1}[0-9]{1}$|^10$)"
         intRegex = QRegExp("^" + intRange)
@@ -49,7 +55,54 @@ class Main(QMainWindow):
         self.ui.lineEdit_7.setValidator(validator_int)
         self.ui.lineEdit_8.setValidator(validator_int)
 
-        self.bitmap_label = None
+    def show_info_messagebox(self):
+        # Создает объект класса QMessageBox
+        msg = QMessageBox()
+        # Устанавливает иконку сообщения в формате 'Information'
+        msg.setIcon(QMessageBox.Information)
+        # Устанавливает текст сообщения
+        msg.setText("Открыть sql код?")
+        # Устанавливает заголовок окна сообщения
+        msg.setWindowTitle("Information MessageBox")
+        # Устанавливает стандартные кнопки в окне сообщения: 'Ok' и 'Cancel'
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        # Открывает окно сообщения и ждет, пока пользователь не нажмет кнопку
+        msg.buttonClicked.connect(self.show_file_message_box)
+        retval = msg.exec_()
+
+    def show_file_message_box(self, i):
+        # Если текст кнопки равен '&OK', вызывает функцию open_doc
+        if i.text() == "&OK":
+            self.open_doc()
+            self.ui.lineEdit.clear()
+        # Если текст кнопки не равен '&OK', возвращает None
+        else:
+            self.ui.lineEdit.clear()
+            return None
+
+    def open_doc(self):
+        # Получает текст из текстового поля
+        name = (f'user_{self.ui.lineEdit.text()}.txt')
+        # Получает путь к файлу на Windows
+        pathwin = (f'{name}')
+        # Получает путь к файлу на Linux и MacOS
+        path = (f'{name}')
+        # Если операционная система Windows, открывает файл с помощью os.startfile
+        if platform.system() == "Windows":
+            path = os.path.realpath(pathwin)
+            os.startfile(path)
+        # Если операционная система MacOS, открывает файл с помощью subprocess. Popen
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", path])
+        # Если операционная система Linux, открывает файл с помощью subprocess. Popen
+        else:
+            subprocess.Popen(["xdg-open", path])
+
+
+
+
+
+
 
 # добавка имени БД + подключение к БД
     def add_database_name(self):
@@ -350,7 +403,6 @@ class Main(QMainWindow):
         self.ui.checkBox_4.setChecked(False)
         self.ui.checkBox_5.setChecked(False)
         self.ui.checkBox_6.setChecked(False)
-        self.ui.lineEdit.clear()
         self.ui.lineEdit_2.clear()
         self.ui.lineEdit_3.clear()
         self.ui.lineEdit_4.clear()
