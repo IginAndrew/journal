@@ -83,6 +83,7 @@ class Main(QMainWindow):
     def open_doc(self):
         # Получает текст из текстового поля
         name = (f'user_{self.ui.lineEdit.text()}.txt')
+        self.add_new_txt_sql(name)
         # Получает путь к файлу на Windows
         pathwin = (f'{name}')
         # Получает путь к файлу на Linux и MacOS
@@ -99,7 +100,28 @@ class Main(QMainWindow):
             subprocess.Popen(["xdg-open", path])
 
 
+    def add_new_txt_sql(self, name):
+        metka = ['@','#', '$', '^', '<', '>', '&', '|']
+        file = open(name, 'r', encoding='utf-8')
+        languages = [line.strip() for line in file.readlines()]
+        file.close()
+        with open(name, 'w', encoding='utf-8') as file:
+            for i in languages:
+                    if i in metka:
+                        file.writelines('' + '\n')
+                    else:
+                        file.writelines(i + '\n')
 
+    def add_table_to_bd_user(self):
+        # добавка имени БД + подключение к БД
+        s = self.add_database_name()
+        # добавка количество персонажей
+        count = self.add_user_count()
+        # добавка имени файла
+        name = self.ui.lineEdit.text()
+        # добавка имени файла
+        name = f'user_{name}.txt'
+        # добавка имени файла
 
 
 
