@@ -26,6 +26,7 @@ numeric = Numeric()
 address = Address(locale="ru")
 payment = Payment()
 
+
 class Main(QMainWindow):
     def __init__(self):
         super(Main, self).__init__()
@@ -82,12 +83,12 @@ class Main(QMainWindow):
 
     def open_doc(self):
         # Получает текст из текстового поля
-        name = (f'user_{self.ui.lineEdit.text()}.txt')
+        name = f"user_{self.ui.lineEdit.text()}.txt"
         self.add_new_txt_sql(name)
         # Получает путь к файлу на Windows
-        pathwin = (f'{name}')
+        pathwin = f"{name}"
         # Получает путь к файлу на Linux и MacOS
-        path = (f'{name}')
+        path = f"{name}"
         # Если операционная система Windows, открывает файл с помощью os.startfile
         if platform.system() == "Windows":
             path = os.path.realpath(pathwin)
@@ -99,18 +100,17 @@ class Main(QMainWindow):
         else:
             subprocess.Popen(["xdg-open", path])
 
-
     def add_new_txt_sql(self, name):
-        metka = ['@','#', '$', '^', '<', '>', '&', '|']
-        file = open(name, 'r', encoding='utf-8')
+        metka = ["@", "#", "$", "^", "<", ">", "&", "|"]
+        file = open(name, "r", encoding="utf-8")
         languages = [line.strip() for line in file.readlines()]
         file.close()
-        with open(name, 'w', encoding='utf-8') as file:
+        with open(name, "w", encoding="utf-8") as file:
             for i in languages:
-                    if i in metka:
-                        file.writelines('' + '\n')
-                    else:
-                        file.writelines(i + '\n')
+                if i in metka:
+                    file.writelines("" + "\n")
+                else:
+                    file.writelines(i + "\n")
 
     def add_table_to_bd_user(self):
         # добавка имени БД + подключение к БД
@@ -120,13 +120,10 @@ class Main(QMainWindow):
         # добавка имени файла
         name = self.ui.lineEdit.text()
         # добавка имени файла
-        name = f'user_{name}.txt'
+        name = f"user_{name}.txt"
         # добавка имени файла
 
-
-
-
-# добавка имени БД + подключение к БД
+    # добавка имени БД + подключение к БД
     def add_database_name(self):
         try:
             if self.ui.lineEdit.text() != "":
@@ -135,15 +132,13 @@ class Main(QMainWindow):
                 return s
             else:
                 QMessageBox.warning(
-                    self,
-                    "ВНИМАНИЕ",
-                    "<b style='color: red;'>НЕТ ДАННЫХ ИМЕНИ БД!</b>")
+                    self, "ВНИМАНИЕ", "<b style='color: red;'>НЕТ ДАННЫХ ИМЕНИ БД!</b>"
+                )
                 return None
         except:
             return None
 
-
-#     добавка количество персонажей
+    #     добавка количество персонажей
     def add_user_count(self):
         try:
             if self.ui.lineEdit_2.text() != "":
@@ -154,77 +149,89 @@ class Main(QMainWindow):
                 QMessageBox.warning(
                     self,
                     "ВНИМАНИЕ",
-                    "<b style='color: red;'>НЕТ ДАННЫХ КОЛ-ВО ПЕРСОНАЖЕЙ!</b>")
+                    "<b style='color: red;'>НЕТ ДАННЫХ КОЛ-ВО ПЕРСОНАЖЕЙ!</b>",
+                )
                 return None
         except:
             return None
 
-# Записывает данные о столбцах таблицы 'User' в список
+    # Записывает данные о столбцах таблицы 'User' в список
     def add_data_to_list(self):
         try:
-            data_list  = []
-            if self.ui.checkBox.isChecked()  ==  True:
+            data_list = []
+            if self.ui.checkBox.isChecked() == True:
                 data_list.append("name")
-            if self.ui.checkBox_2.isChecked()   ==  True:
+            if self.ui.checkBox_2.isChecked() == True:
                 data_list.append("surname")
-            if self.ui.checkBox_3.isChecked()   ==  True:
+            if self.ui.checkBox_3.isChecked() == True:
                 data_list.append("birthdate")
-            if self.ui.checkBox_4.isChecked()   ==  True:
+            if self.ui.checkBox_4.isChecked() == True:
                 data_list.append("address")
-            if self.ui.checkBox_5.isChecked()   ==  True:
+            if self.ui.checkBox_5.isChecked() == True:
                 data_list.append("political_views")
-            if self.ui.checkBox_6.isChecked()   ==  True:
+            if self.ui.checkBox_6.isChecked() == True:
                 data_list.append("passpord")
             return sorted(data_list)
         except:
             return None
 
-# добавляем таблицу 'User' в БД
+    # добавляем таблицу 'User' в БД
     def add_table_to_bd_user(self):
         try:
-            if self.add_database_name() !=  None:
+            if self.add_database_name() != None:
                 s = self.add_database_name()
                 data_list = self.add_data_to_list()
                 user_args_txt = Txt_db()
-                user_args_txt.user_args_txt(self.ui.lineEdit.text(),data_list)
+                user_args_txt.user_args_txt(self.ui.lineEdit.text(), data_list)
                 s.users(User())
                 list_insert_user = []
                 for _ in range(self.add_user_count()):
-                    if 'address' in data_list:
-                        adress = address.city() + " " + address.street_name() + " " + address.street_number() +  "  "  + address.postal_code()
+                    if "address" in data_list:
+                        adress = (
+                            address.city()
+                            + " "
+                            + address.street_name()
+                            + " "
+                            + address.street_number()
+                            + "  "
+                            + address.postal_code()
+                        )
                         list_insert_user.append(adress)
-                    if  'birthdate' in data_list:
+                    if "birthdate" in data_list:
                         birthdate = person.birthdate()
                         list_insert_user.append(str(birthdate))
-                    if 'name' in data_list:
+                    if "name" in data_list:
                         name = person.name(gender=Gender.MALE)
                         list_insert_user.append(name)
-                    if 'passpord' in data_list:
-                        passpord = abs(numeric.integer_number(start=100000000, end=999999999))
+                    if "passpord" in data_list:
+                        passpord = abs(
+                            numeric.integer_number(start=100000000, end=999999999)
+                        )
                         list_insert_user.append(str(passpord))
-                    if 'political_views' in data_list:
+                    if "political_views" in data_list:
                         political_views = person.political_views()
                         list_insert_user.append(political_views)
-                    if 'surname' in data_list:
-                        surname  =  person.surname(gender=Gender.MALE)
+                    if "surname" in data_list:
+                        surname = person.surname(gender=Gender.MALE)
                         list_insert_user.append(surname)
-                    s.post_users(User(),data_list, tuple(list_insert_user))
+                    s.post_users(User(), data_list, tuple(list_insert_user))
                     list_insert_user = []
             else:
                 QMessageBox.warning(
                     self,
                     "ВНИМАНИЕ",
-                    "<b style='color: red;'>НЕТ ДАННЫХ столбцов таблицы 'User'!</b>")
+                    "<b style='color: red;'>НЕТ ДАННЫХ столбцов таблицы 'User'!</b>",
+                )
                 return None
 
         except:
             return None
 
-# добавляем данные о почте
+    # добавляем данные о почте
     def add_table_to_bd_email_data(self):
         try:
             s = self.add_database_name()
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_3.text())
                 for _ in range(random.randint(1, x)):
                     email_user = person.email()
@@ -233,10 +240,10 @@ class Main(QMainWindow):
         except:
             return None
 
-# добавляем таблицу почты в БД
+    # добавляем таблицу почты в БД
     def add_table_to_bd_email(self):
         try:
-            if self.ui.lineEdit_3.text() !=  "":
+            if self.ui.lineEdit_3.text() != "":
                 s = self.add_database_name()
                 s.email(Email())
                 self.add_table_to_bd_email_data()
@@ -246,14 +253,12 @@ class Main(QMainWindow):
         except:
             return None
 
-
-
-# добавляем таблицу telephon в БД
+    # добавляем таблицу telephon в БД
 
     def add_table_to_bd_phone_data(self):
         try:
             s = self.add_database_name()
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_4.text())
                 for _ in range(random.randint(1, x)):
                     phone_user = person.telephone()
@@ -261,9 +266,10 @@ class Main(QMainWindow):
                     s.post_phone(Phone(), phone_user, i)
         except:
             return None
+
     def add_table_to_bd_phones(self):
         try:
-            if self.ui.lineEdit_4.text() !=  "":
+            if self.ui.lineEdit_4.text() != "":
                 s = self.add_database_name()
                 s.phone(Phone())
                 self.add_table_to_bd_phone_data()
@@ -273,12 +279,12 @@ class Main(QMainWindow):
         except:
             return None
 
-# добавляем таблицу car в БД
+    # добавляем таблицу car в БД
 
     def add_table_to_bd_car_data(self):
         try:
             s = self.add_database_name()
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_5.text())
                 for _ in range(random.randint(1, x)):
                     nomer = abs(numeric.integer_number())
@@ -287,9 +293,10 @@ class Main(QMainWindow):
                     s.post_car(Car(), str(nomer), marka, str(znak), i)
         except:
             return None
+
     def add_table_to_bd_cars(self):
         try:
-            if self.ui.lineEdit_5.text() !=  "":
+            if self.ui.lineEdit_5.text() != "":
                 s = self.add_database_name()
                 s.car(Car())
                 self.add_table_to_bd_car_data()
@@ -299,23 +306,30 @@ class Main(QMainWindow):
         except:
             return None
 
-# добавляем таблицу credits в БД
+    # добавляем таблицу credits в БД
 
     def add_table_to_bd_credits_data(self):
         try:
             s = self.add_database_name()
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_6.text())
                 for _ in range(random.randint(1, x)):
                     credit_card_number = payment.credit_card_number()
                     credit_card_expiration_date = payment.credit_card_expiration_date()
                     cvv = payment.cvv()
-                    s.post_credit(Credit(), credit_card_number, credit_card_expiration_date, cvv, i)
+                    s.post_credit(
+                        Credit(),
+                        credit_card_number,
+                        credit_card_expiration_date,
+                        cvv,
+                        i,
+                    )
         except:
             return None
+
     def add_table_to_bd_credits(self):
         try:
-            if self.ui.lineEdit_6.text() !=  "":
+            if self.ui.lineEdit_6.text() != "":
                 s = self.add_database_name()
                 s.credit(Credit())
                 self.add_table_to_bd_credits_data()
@@ -325,14 +339,14 @@ class Main(QMainWindow):
         except:
             return None
 
-# добавляем таблицу language в БД
+    # добавляем таблицу language в БД
 
     def add_table_to_bd_languages_data(self):
         try:
             s = self.add_database_name()
             l = Language()
             l.connect(self.ui.lineEdit.text())
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_7.text())
                 for _ in range(random.randint(1, x)):
                     language_user = person.language()
@@ -348,7 +362,7 @@ class Main(QMainWindow):
             s = self.add_database_name()
             l = Language()
             l.connect(self.ui.lineEdit.text())
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_7.text())
                 for _ in range(random.randint(1, x)):
                     random_id = random.choice(l.get_language_id())
@@ -361,7 +375,7 @@ class Main(QMainWindow):
 
     def add_table_to_bd_languages(self):
         try:
-            if self.ui.lineEdit_7.text() !=  "":
+            if self.ui.lineEdit_7.text() != "":
                 s = self.add_database_name()
                 s.language(Language())
                 self.add_table_to_bd_languages_data()
@@ -372,14 +386,14 @@ class Main(QMainWindow):
         except:
             return None
 
-# добавляем таблицу work в БД
+    # добавляем таблицу work в БД
 
     def add_table_to_bd_work_data(self):
         try:
             s = self.add_database_name()
             l = Work()
             l.connect(self.ui.lineEdit.text())
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_8.text())
                 for _ in range(random.randint(1, x)):
                     work_user = person.occupation()
@@ -395,7 +409,7 @@ class Main(QMainWindow):
             s = self.add_database_name()
             l = Work()
             l.connect(self.ui.lineEdit.text())
-            for i in range(1, self.add_user_count()+1):
+            for i in range(1, self.add_user_count() + 1):
                 x = int(self.ui.lineEdit_8.text())
                 for _ in range(random.randint(1, x)):
                     random_id = random.choice(l.get_work_id())
@@ -405,9 +419,10 @@ class Main(QMainWindow):
                         continue
         except:
             return None
+
     def add_table_to_bd_work(self):
         try:
-            if self.ui.lineEdit_8.text() !=  "":
+            if self.ui.lineEdit_8.text() != "":
                 s = self.add_database_name()
                 s.work(Work())
                 self.add_table_to_bd_work_data()
@@ -418,7 +433,7 @@ class Main(QMainWindow):
         except:
             return None
 
-    def clear_line_edit(self):# очищаем все поля
+    def clear_line_edit(self):  # очищаем все поля
         self.ui.checkBox.setChecked(False)
         self.ui.checkBox_2.setChecked(False)
         self.ui.checkBox_3.setChecked(False)
@@ -434,7 +449,7 @@ class Main(QMainWindow):
         self.ui.lineEdit_8.clear()
 
     def pil_open(self):
-        filename = ('7.png')
+        filename = "7.png"
         with Image.open(filename) as img:
             img.load()
             img.show()
