@@ -1,1 +1,1 @@
-# creat sqlite db
+# journal
